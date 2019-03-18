@@ -1,1 +1,1 @@
-# OSF-Lint
+# OSF-Linter
