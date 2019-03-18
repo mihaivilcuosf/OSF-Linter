@@ -1,5 +1,5 @@
 {
-  "name": "@osf/linter",
+  "name": "@osf-global/linter",
   "version": "1.0.0",
   "repository": "git@github.com:OSFGlobal/OSF-Linter.git",
   "author": "Daniel Anechitoaie <daniel.anechitoaie@osf-commerce.com>",
@@ -8,7 +8,6 @@
   "engines": {
     "node": ">=8.15.0"
   },
-  "private": true,
   "scripts": {
     "watch": "babel --watch --out-dir . src",
     "build": "babel --out-dir . src",
