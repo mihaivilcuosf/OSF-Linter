@@ -1,9 +1,12 @@
 {
   "name": "@osf-global/linter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": "git@github.com:OSFGlobal/OSF-Linter.git",
   "author": "Daniel Anechitoaie <daniel.anechitoaie@osf-commerce.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "index.js",
   "engines": {
     "node": ">=8.15.0"
@@ -16,6 +19,11 @@
   "bin": {
     "osf-linter": "./bin/osf-linter.js"
   },
+  "files": [
+    "/bin/**/*",
+    "/eslint/**/*",
+    "/stylelint/**/*"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
