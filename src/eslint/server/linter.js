@@ -72,10 +72,9 @@ export default async report => {
 
                                 return {
                                     path: relativePath,
-                                    startLine: message.line,
-                                    startColumn: message.column,
-                                    endLine: message.endLine,
-                                    endColumn: message.endColumn,
+                                    start_line: message.line,
+                                    end_line: message.endLine,
+                                    annotation_level: "failure",
                                     message: `[${messageType}] ${message.message} (${message.ruleId})`
                                 };
                             });

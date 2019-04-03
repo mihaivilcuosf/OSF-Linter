@@ -67,8 +67,9 @@ export default async report => {
                             return _.map(result.warnings, warning => {
                                 return {
                                     path: relativePath,
-                                    startLine: warning.line,
-                                    startColumn: warning.column,
+                                    start_line: warning.line,
+                                    end_line: warning.line,
+                                    annotation_level: "failure",
                                     message: `[${warning.severity}] ${warning.text}`
                                 };
                             });
