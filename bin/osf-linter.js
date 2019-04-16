@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import process from "process";
-import yargs from "yargs";
-import chalk from "chalk";
-import eslintServer from "../eslint/server/linter";
-import eslintClient from "../eslint/client/linter";
-import stylelint from "../stylelint/linter";
+const process = require("process");
+const yargs = require("yargs");
+const chalk = require("chalk");
+const eslintServer = require("../eslint_server/linter");
+const eslintClient = require("../eslint_client/linter");
+const stylelint = require("../stylelint/linter");
 
 const argv = yargs
     .usage("Usage: $0 [options]")

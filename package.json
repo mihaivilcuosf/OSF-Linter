@@ -1,6 +1,6 @@
 {
   "name": "@osf-global/linter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": "git@github.com:OSFGlobal/OSF-Linter.git",
   "author": "Daniel Anechitoaie <daniel.anechitoaie@osf-commerce.com>",
   "license": "MIT",
@@ -9,29 +9,10 @@
   },
   "main": "index.js",
   "engines": {
-    "node": ">=8.15.0"
-  },
-  "scripts": {
-    "watch": "babel --watch --out-dir . src",
-    "build": "babel --out-dir . src",
-    "prepare": "cross-env NODE_ENV=production yarn run build"
+    "node": ">=10.15.3"
   },
   "bin": {
     "osf-linter": "./bin/osf-linter.js"
-  },
-  "files": [
-    "/bin/**/*",
-    "/eslint/**/*",
-    "/stylelint/**/*"
-  ],
-  "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.3.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/preset-env": "^7.3.4",
-    "babel-plugin-dynamic-import-node": "^2.2.0",
-    "cross-env": "^5.2.0",
-    "yarn": "^1.13.0"
   },
   "dependencies": {
     "chalk": "^2.4.2",

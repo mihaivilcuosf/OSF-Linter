@@ -1,14 +1,20 @@
-export default {
+module.exports = {
     root: true,
     useEslintrc: false,
     extends: "eslint:recommended",
     env: {
-        browser: true,
-        commonjs: true,
-        es6: true,
-        jquery: true
+        commonjs: true
     },
-    globals: {},
+    globals: {
+        dw: true,
+        customer: true,
+        session: true,
+        request: true,
+        response: true,
+        empty: true,
+        PIPELET_ERROR: true,
+        PIPELET_NEXT: true
+    },
     rules: {
         "eol-last": ["error", "always"],
         "func-style": "off",

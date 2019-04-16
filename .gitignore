@@ -1,8 +1,5 @@
 # NodeJS
 /node_modules/
-/bin/
-/eslint/
-/stylelint/
 
 # MacOS
 .DS_Store

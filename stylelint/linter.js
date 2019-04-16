@@ -1,15 +1,14 @@
-import _ from "lodash";
-import chalk from "chalk";
-import config from "./config";
-import eslint from "eslint";
-import fse from "fs-extra";
-import globby from "globby";
-import path from "path";
-import process from "process";
-import uuid4 from "uuid/v4";
+const _ = require("lodash");
+const config = require("./config");
+const chalk = require("chalk");
+const fse = require("fs-extra");
+const path = require("path");
+const process = require("process");
+const stylelint = require("stylelint");
+const uuid4 = require("uuid/v4");
 
-export default async report => {
-    let osfLinterPath = path.resolve(process.cwd(), "osf-linter.config.js");
+module.exports = async report => {
+    let osfLinterPath = path.resolve(process.cwd(), "osflinter.config.js");
     if (!fse.existsSync(osfLinterPath)) {
         console.error(`${chalk.red.bold("\u2716")} ${osfLinterPath} does not exist!`);
         process.exit(1);
@@ -17,7 +16,7 @@ export default async report => {
 
     let osfLinterConf;
     try {
-        osfLinterConf = await import(osfLinterPath);
+        osfLinterConf = require(osfLinterPath);
     } catch (e) {
         console.error(`${chalk.red.bold("\u2716")} Failed to import ${osfLinterPath}!`);
         console.error(e);
@@ -29,19 +28,20 @@ export default async report => {
         process.exit(1);
     }
 
-    if (!osfLinterConf.eslintClient) {
-        console.error(`${chalk.red.bold("\u2716")} Missing eslintClient configuration from ${osfLinterPath}!`);
+    if (!osfLinterConf.stylelint) {
+        console.error(`${chalk.red.bold("\u2716")} Missing stylelint configuration from ${osfLinterPath}!`);
         process.exit(1);
     }
 
     try {
-        let cli = new eslint.CLIEngine({baseConfig: config, useEslintrc: false});
-        let files = await globby(osfLinterConf.eslintClient);
-        let data = cli.executeOnFiles(files);
+        let data = await stylelint.lint({
+            config: config,
+            files: osfLinterConf.stylelint,
+            formatter: stylelint.formatters.verbose
+        });
 
-        if (data.errorCount > 0 || data.warningCount > 0) {
-            let formatter = cli.getFormatter("stylish");
-            console.error(formatter(data.results));
+        if (data.errored) {
+            console.error(data.output);
 
             if (report) {
                 let reportPath = path.resolve(process.cwd(), report);
@@ -49,7 +49,7 @@ export default async report => {
                     fse.ensureDirSync(reportPath);
                 }
 
-                let reportFile = path.resolve(reportPath, `ESLintClient.${uuid4()}.json`);
+                let reportFile = path.resolve(reportPath, `StyleLint.${uuid4()}.json`);
                 if (fse.existsSync(reportFile)) {
                     console.error(`${chalk.red.bold("\u2716")} reportFile=${reportFile} already exists!`);
                     process.exit(1);
@@ -60,22 +60,17 @@ export default async report => {
                     JSON.stringify(
                         _.flatMap(data.results, result => {
                             let relativePath = path
-                                .relative(process.cwd(), result.filePath)
+                                .relative(process.cwd(), result.source)
                                 .split(path.sep)
                                 .join("/");
 
-                            return _.map(result.messages, message => {
-                                let messageType = "warning";
-                                if (message.fatal || message.severity === 2) {
-                                    messageType = "error";
-                                }
-
+                            return _.map(result.warnings, warning => {
                                 return {
                                     path: relativePath,
-                                    start_line: message.line,
-                                    end_line: message.endLine,
+                                    start_line: warning.line,
+                                    end_line: warning.line,
                                     annotation_level: "failure",
-                                    message: `[${messageType}] ${message.message} (${message.ruleId})`
+                                    message: `[${warning.severity}] ${warning.text}`
                                 };
                             });
                         })
@@ -86,7 +81,7 @@ export default async report => {
             process.exit(1);
         }
     } catch (e) {
-        console.error(`${chalk.red.bold("\u2716")} Failed to run eslintClient!`);
+        console.error(`${chalk.red.bold("\u2716")} Failed to run styleint!`);
         console.error(e);
         process.exit(1);
     }

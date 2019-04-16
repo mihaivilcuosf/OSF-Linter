@@ -1,15 +1,15 @@
-import _ from "lodash";
-import chalk from "chalk";
-import config from "./config";
-import eslint from "eslint";
-import fse from "fs-extra";
-import globby from "globby";
-import path from "path";
-import process from "process";
-import uuid4 from "uuid/v4";
+const _ = require("lodash");
+const chalk = require("chalk");
+const config = require("./config");
+const eslint = require("eslint");
+const fse = require("fs-extra");
+const globby = require("globby");
+const path = require("path");
+const process = require("process");
+const uuid4 = require("uuid/v4");
 
-export default async report => {
-    let osfLinterPath = path.resolve(process.cwd(), "osf-linter.config.js");
+module.exports = async report => {
+    let osfLinterPath = path.resolve(process.cwd(), "osflinter.config.js");
     if (!fse.existsSync(osfLinterPath)) {
         console.error(`${chalk.red.bold("\u2716")} ${osfLinterPath} does not exist!`);
         process.exit(1);
@@ -17,7 +17,7 @@ export default async report => {
 
     let osfLinterConf;
     try {
-        osfLinterConf = await import(osfLinterPath);
+        osfLinterConf = require(osfLinterPath);
     } catch (e) {
         console.error(`${chalk.red.bold("\u2716")} Failed to import ${osfLinterPath}!`);
         console.error(e);
@@ -29,14 +29,14 @@ export default async report => {
         process.exit(1);
     }
 
-    if (!osfLinterConf.eslintServer) {
-        console.error(`${chalk.red.bold("\u2716")} Missing eslintServer configuration from ${osfLinterPath}!`);
+    if (!osfLinterConf.eslintClient) {
+        console.error(`${chalk.red.bold("\u2716")} Missing eslintClient configuration from ${osfLinterPath}!`);
         process.exit(1);
     }
 
     try {
         let cli = new eslint.CLIEngine({baseConfig: config, useEslintrc: false});
-        let files = await globby(osfLinterConf.eslintServer);
+        let files = await globby(osfLinterConf.eslintClient);
         let data = cli.executeOnFiles(files);
 
         if (data.errorCount > 0 || data.warningCount > 0) {
@@ -49,7 +49,7 @@ export default async report => {
                     fse.ensureDirSync(reportPath);
                 }
 
-                let reportFile = path.resolve(reportPath, `ESLintServer.${uuid4()}.json`);
+                let reportFile = path.resolve(reportPath, `ESLintClient.${uuid4()}.json`);
                 if (fse.existsSync(reportFile)) {
                     console.error(`${chalk.red.bold("\u2716")} reportFile=${reportFile} already exists!`);
                     process.exit(1);
@@ -86,7 +86,7 @@ export default async report => {
             process.exit(1);
         }
     } catch (e) {
-        console.error(`${chalk.red.bold("\u2716")} Failed to run eslintServer!`);
+        console.error(`${chalk.red.bold("\u2716")} Failed to run eslintClient!`);
         console.error(e);
         process.exit(1);
     }
